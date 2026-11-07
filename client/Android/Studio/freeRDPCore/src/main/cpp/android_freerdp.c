@@ -1290,8 +1290,9 @@ Java_com_freerdp_freerdpcore_services_LibFreeRDP_freerdp_1has_1camera_1redirecti
 	 * ordinary receiver usable without the API-24 Camera2 component. */
 	if (__builtin_available(android 24, *))
 	{
-		return freerdp_load_channel_addin_entry("rdpecam", nullptr, nullptr,
-		                                       FREERDP_ADDIN_CHANNEL_DYNAMIC)
+		/* Java queries this before any session registers an addin provider. */
+		return freerdp_channels_load_static_addin_entry("rdpecam", nullptr, nullptr,
+		                                              FREERDP_ADDIN_CHANNEL_DYNAMIC)
 		           ? JNI_TRUE
 		           : JNI_FALSE;
 	}
