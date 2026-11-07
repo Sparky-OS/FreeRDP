@@ -340,14 +340,8 @@ static UINT cam_android_enumerate(ICamHal* ihal, ICamHalEnumCallback callback, C
 
 	UINT count = 0;
 
-	/* The NV12 frames go to the server as H.264 (the first format of getSupportedFormats with NV12
-	 * as its input): encoded by MediaCodec, or by FFmpeg with swscale. Without either, offer no
-	 * cameras. */
-	if (!freerdp_video_conversion_supported(FREERDP_VIDEO_FORMAT_NV12, FREERDP_VIDEO_FORMAT_H264))
-	{
-		WLog_WARN(TAG, "Camera redirection unavailable: no conversion of NV12 frames to H.264");
-		return 0;
-	}
+	/* GetMediaTypeDescriptions selects an available conversion, including raw NV12
+	 * passthrough when no H.264 encoder is built. */
 
 	ACameraIdList* idList = nullptr;
 	if (ACameraManager_getCameraIdList(hal->manager, &idList) != ACAMERA_OK || !idList)
