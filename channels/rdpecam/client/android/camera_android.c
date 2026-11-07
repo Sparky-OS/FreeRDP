@@ -33,6 +33,8 @@
 
 #define TAG CHANNELS_TAG("rdpecam-android.client")
 
+#include "camera_android_api.h"
+
 #define ANDROID_CAMERA_PREFIX "android-camera-"
 #define ANDROID_CAMERA_PREFIX_LEN (sizeof(ANDROID_CAMERA_PREFIX) - 1)
 
@@ -823,6 +825,9 @@ FREERDP_ENTRY_POINT(UINT VCAPITYPE android_freerdp_rdpecam_client_subsystem_entr
     PFREERDP_CAMERA_HAL_ENTRY_POINTS pEntryPoints))
 {
 	WINPR_ASSERT(pEntryPoints);
+
+	if (!InitOnceExecuteOnce(&cam_android_api_once, cam_android_load_api, nullptr, nullptr))
+		return CHANNEL_RC_UNSUPPORTED_VERSION;
 
 	CamAndroidHal* hal = (CamAndroidHal*)calloc(1, sizeof(CamAndroidHal));
 	if (!hal)

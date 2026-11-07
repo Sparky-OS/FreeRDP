@@ -21,7 +21,10 @@ if(ANDROID)
 
   set(${MODULE_PREFIX}_SRCS camera_android.c)
 
-  set(${MODULE_PREFIX}_LIBS winpr freerdp camera2ndk mediandk)
+  set(${MODULE_PREFIX}_LIBS winpr freerdp dl)
+
+  # Only function types are taken from newer declarations; calls use the checked table.
+  add_compile_definitions(__ANDROID_UNAVAILABLE_SYMBOLS_ARE_WEAK__)
 
   include_directories(..)
 

@@ -14,6 +14,7 @@
 */
 
 #include <freerdp/config.h>
+#include <freerdp/addin.h>
 
 #include <locale.h>
 
@@ -1284,10 +1285,17 @@ JNIEXPORT jboolean JNICALL
 Java_com_freerdp_freerdpcore_services_LibFreeRDP_freerdp_1has_1camera_1redirection(JNIEnv* env,
                                                                                    jclass cls)
 {
-	return freerdp_video_conversion_supported(FREERDP_VIDEO_FORMAT_NV12,
-	                                          FREERDP_VIDEO_FORMAT_YUV420P)
-	           ? JNI_TRUE
-	           : JNI_FALSE;
+	/* Raw camera passthrough does not need a pixel converter. Report the channel's
+	 * presence independently of optional compressed encoders, and keep API 23's
+	 * ordinary receiver usable without the API-24 Camera2 component. */
+	if (__builtin_available(android 24, *))
+	{
+		return freerdp_load_channel_addin_entry("rdpecam", nullptr, nullptr,
+		                                       FREERDP_ADDIN_CHANNEL_DYNAMIC)
+		           ? JNI_TRUE
+		           : JNI_FALSE;
+	}
+	return JNI_FALSE;
 }
 
 JNIEXPORT jstring JNICALL
